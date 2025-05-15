@@ -1,3 +1,6 @@
+using FileStore.Services;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
+
 namespace FileStore
 {
     public class Program
@@ -8,6 +11,12 @@ namespace FileStore
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddSingleton<IUserService,  UserService>();
+
+            builder.Services.AddControllers(options =>
+            {
+                options.ModelMetadataDetailsProviders.Add(new SystemTextJsonValidationMetadataProvider());
+            });
 
             var app = builder.Build();
 
