@@ -1,4 +1,7 @@
 using FileStore.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 
 namespace FileStore
@@ -10,17 +13,38 @@ namespace FileStore
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddControllersWithViews();
+            // Add MVC with global authorization policy
+            builder.Services.AddControllersWithViews(options =>
+            {
+                // Require authenticated users by default
+                var policy = new AuthorizationPolicyBuilder()
+                                 .RequireAuthenticatedUser()
+                                 .Build();
+                options.Filters.Add(new AuthorizeFilter(policy));
+            });
+
+            // Register in-memory user service
             builder.Services.AddSingleton<IUserService,  UserService>();
 
-            builder.Services.AddControllers(options =>
-            {
-                options.ModelMetadataDetailsProviders.Add(new SystemTextJsonValidationMetadataProvider());
-            });
+            // Configure JSON metadata provider
+            //builder.Services.AddControllers(options =>
+            //{
+            //    options.ModelMetadataDetailsProviders.Add(new SystemTextJsonValidationMetadataProvider());
+            //});
+
+            // Configure Authentication & Cookie settings
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                   .AddCookie(options =>
+                   {
+                       options.LoginPath = "/Account/Login";
+                       options.AccessDeniedPath = "/Account/AccessDenied";
+                       options.ExpireTimeSpan = TimeSpan.FromHours(1);
+                       options.SlidingExpiration = true;
+                   });
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // Configure the HTTP request or middleware pipeline.
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
@@ -33,8 +57,11 @@ namespace FileStore
 
             app.UseRouting();
 
+            // Enable authentication and authorization
+            app.UseAuthentication();
             app.UseAuthorization();
 
+            // Route configuration
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");

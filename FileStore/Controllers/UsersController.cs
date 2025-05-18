@@ -1,5 +1,6 @@
 ﻿using FileStore.Services;
 using FileStore.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FileStore.Controllers
@@ -12,14 +13,13 @@ namespace FileStore.Controllers
             _userService = userService;
         }
 
-        [HttpGet]
+        [HttpGet, AllowAnonymous]
         public IActionResult Register()
         {
             return View();
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken, AllowAnonymous]
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
         {
             if (!ModelState.IsValid)
@@ -27,18 +27,24 @@ namespace FileStore.Controllers
 
 
             var result = await _userService.RegisterUser(
-                registerViewModel.Email, registerViewModel.Password, registerViewModel.FirstName, registerViewModel.LastName);
+                registerViewModel.Email!, registerViewModel.FirstName!, registerViewModel.LastName!, registerViewModel.Password!);
+
+            var all = _userService.GetAllUsers().ToList();
+            Console.WriteLine("Currently in store: " + string.Join(", ", all.Select(u => u.Email)));
 
             if (result)
             {
                 TempData["Message"] = "User registered successfully.";
+                await Task.Delay(TimeSpan.FromSeconds(3));
                 return RedirectToAction("Register");
             }
 
-            ModelState.AddModelError("", "User registration failed.");
+            ModelState.AddModelError(string.Empty, "Email already in use.");
             return View(registerViewModel);
 
         }
+
+
     }
 }
 

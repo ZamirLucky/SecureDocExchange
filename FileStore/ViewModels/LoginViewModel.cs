@@ -2,7 +2,7 @@
 
 namespace FileStore.ViewModels
 {
-    public class RegisterViewModel
+    public class LoginViewModel
     {
         [Required, EmailAddress]
         public string? Email { get; set; }
@@ -16,5 +16,6 @@ namespace FileStore.ViewModels
         [Required, DataType(DataType.Password)]
         public string? Password { get; set; }
 
+        public string? ReturnUrl { get; set; }
     }
 }

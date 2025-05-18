@@ -29,7 +29,7 @@ namespace FileStore.Services
             _users[demo.Email] = demo;
         }
 
-        public Task<bool> RegisterUser(string email, string password, string firstName, string lastName)
+        public Task<bool> RegisterUser(string email, string firstName, string lastName, string password)
         {
 
             using var sha256Hash = SHA256.Create();
@@ -46,6 +46,24 @@ namespace FileStore.Services
             // Add user to the in-memory store
             var added = _users.TryAdd(email, user);
             return Task.FromResult(added);
+        }
+
+        public Task<User> ValidateUserCredentials(string email, string password)
+        {
+            if (_users.TryGetValue(email, out var user))
+            {
+                using var sha256Hash = SHA256.Create();
+                string passwordHash = GetHash(sha256Hash, password);
+                if (string.Equals(passwordHash, user.Password, StringComparison.Ordinal))
+                    return Task.FromResult(user);
+            }
+            //return Task.FromResult<User>(null);
+            throw new InvalidOperationException("Invalid user credentials.");
+        }
+
+        public IEnumerable<User> GetAllUsers()
+        {
+            return _users.Values;
         }
 
         private static string GetHash(HashAlgorithm hashAlgorithm, string input)
@@ -69,6 +87,7 @@ namespace FileStore.Services
             return sBuilder.ToString();
         }
 
+        
     }
        
 }
