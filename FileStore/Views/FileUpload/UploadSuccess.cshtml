@@ -1,0 +1,9 @@
+﻿@{
+    ViewData["Title"] = "Upload Successful";
+}
+<div class="alert alert-success">
+    <h4>Your file was uploaded!</h4>
+    <p>Please save this code to download later:</p>
+    <pre class="bg-light p-2 border">@ViewBag.Code</pre>
+</div>
+<a asp-action="Upload" class="btn btn-link">Upload another file</a>

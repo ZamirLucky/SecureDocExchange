@@ -1,0 +1,41 @@
+﻿
+@model FileStore.ViewModels.FileUploadViewModel
+@{
+    ViewData["Title"] = "Secure File Upload";
+}
+
+<h2 class="mb-4">@ViewData["Title"]</h2>
+
+@* Summary of all errors *@
+<div asp-validation-summary="All" class="alert alert-danger"></div>
+
+<form asp-action="Upload" method="post" enctype="multipart/form-data" novalidate>
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label asp-for="ClientEmail" class="form-label"></label>
+        <input asp-for="ClientEmail" class="form-control @(ViewData.ModelState["ClientEmail"]?.Errors.Count > 0 ? "is-invalid" : "")" />
+        <span asp-validation-for="ClientEmail" class="invalid-feedback"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="LawyerEmail" class="form-label"></label>
+        <input asp-for="LawyerEmail" class="form-control @(ViewData.ModelState["LawyerEmail"]?.Errors.Count > 0 ? "is-invalid" : "")" />
+        <span asp-validation-for="LawyerEmail" class="invalid-feedback"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="File" class="form-label"></label>
+        <input asp-for="File"
+               type="file"
+               accept=".docx"
+               class="form-control @(ViewData.ModelState["File"]?.Errors.Count > 0 ? "is-invalid" : "")" />
+        <span asp-validation-for="File" class="invalid-feedback"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Upload</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

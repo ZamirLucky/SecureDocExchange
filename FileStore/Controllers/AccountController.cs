@@ -8,6 +8,7 @@ using System.Security.Claims;
 
 namespace FileStore.Controllers
 {
+    [Route("[controller]/[action]")]
     public class AccountController : Controller
     {
         private readonly IUserService _userService;
@@ -58,6 +59,15 @@ namespace FileStore.Controllers
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login");
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult AccessDenied(string? returnUrl = null)
+        {
+            // pass returnUrl into the view if you like
+            ViewData["ReturnUrl"] = returnUrl;
+            return View();  
         }
     }
 }

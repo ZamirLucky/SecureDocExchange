@@ -57,8 +57,8 @@ namespace FileStore.Services
                 if (string.Equals(passwordHash, user.Password, StringComparison.Ordinal))
                     return Task.FromResult(user);
             }
-            //return Task.FromResult<User>(null);
-            throw new InvalidOperationException("Invalid user credentials.");
+            return Task.FromResult<User>(null);
+            //throw new InvalidOperationException("Invalid user credentials.");
         }
 
         public IEnumerable<User> GetAllUsers()

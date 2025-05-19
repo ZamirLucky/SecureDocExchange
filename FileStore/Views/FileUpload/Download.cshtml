@@ -1,0 +1,19 @@
+﻿@model FileStore.ViewModels.DownloadViewModel
+<form asp-action="Download" method="post" class="mt-4" novalidate>
+    @Html.AntiForgeryToken()
+    <div class="mb-3">
+        <label asp-for="LawyerEmail" class="form-label"></label>
+        <input asp-for="LawyerEmail" class="form-control" />
+        <span asp-validation-for="LawyerEmail" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Code" class="form-label"></label>
+        <input asp-for="Code" class="form-control" />
+        <span asp-validation-for="Code" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Download</button>
+</form>
+
+

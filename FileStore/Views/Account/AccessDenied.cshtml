@@ -1,1 +1,10 @@
-﻿You cannot access this page because you do not have the required permissions.
+﻿@{
+    ViewData["Title"] = "Access Denied";
+}
+
+<h2>@ViewData["Title"]</h2>
+<p>You do not have permission to view that resource.</p>
+@if (ViewData["ReturnUrl"] is string url && !string.IsNullOrEmpty(url))
+{
+    <p><a href="@url">Return to the previous page</a></p>
+}
